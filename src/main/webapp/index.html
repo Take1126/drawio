@@ -428,7 +428,7 @@ else
 {
 	$(function(){
 		$.ajax({
-			url: 'recieve.py',
+			url: 'http://localhost:8080/drawio/cgi-bin/hello.cgi',
 			type: 'post',
 			data: '送信メッセージ'
 		}).done(function(data){
