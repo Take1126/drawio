@@ -1907,7 +1907,8 @@ Actions.prototype.init = function() {
         b.setSelectionCells(b.setPhysicalOperationContainer());
     }, null, null, null);
     this.addAction("callPython", function() {
-        b.setSelectionCells(b.callPython());
+        b.callPython();
+        // b.setSelectionCells(b.callPython());
     }, null, null, null);
 
     this.addAction("clearDefaultStyle", function() {
@@ -2508,6 +2509,17 @@ Menus.prototype.addPopupMenuStyleItems = function(a, c, d) {
         //to call python code
         q.callPython = function(b, c) {
             console.log("calling python");
+            $(function() {
+                $.ajax({
+                    url: 'http://localhost:8080/drawio/cgi-bin/hello.cgi',
+                    type: 'get',
+                    // data: '送信メッセージ',
+                }).done(function(data) {
+                    console.log(data);
+                }).fail(function() {
+                    console.log('failed');
+                });
+            });
         };
 
         //親アクションのエンジニアリングサイクルコンテナを設置する

@@ -20,6 +20,10 @@
 	<meta name="msapplication-config" content="images/browserconfig.xml">
     <meta name="mobile-web-app-capable" content="yes">
 	<meta name="theme-color" content="#d89000">
+	<script
+	src="https://code.jquery.com/jquery-3.6.0.min.js"
+	integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+	crossorigin="anonymous"></script>
 	<script type="text/javascript">
 		/**
 		 * URL Parameters and protocol description are here:
@@ -131,8 +135,8 @@
 					s.setAttribute('http-equiv', httpEquiv);
 				}
 
-			  	var t = document.getElementsByTagName('meta')[0];
-			  	t.parentNode.insertBefore(s, t);
+				var t = document.getElementsByTagName('meta')[0];
+				t.parentNode.insertBefore(s, t);
 			}
 			catch (e)
 			{
@@ -168,18 +172,18 @@
 					{
 						if (!r && (!this.readyState || this.readyState == 'complete'))
 						{
-				      		r = true;
-				      		onLoad();
+							r = true;
+							onLoad();
 						}
-				  	};
+					};
 				}
-			  	
-			  	var t = document.getElementsByTagName('script')[0];
-			  	
-			  	if (t != null)
-			  	{
-			  		t.parentNode.insertBefore(s, t);
-			  	}
+				
+				var t = document.getElementsByTagName('script')[0];
+				
+				if (t != null)
+				{
+					t.parentNode.insertBefore(s, t);
+				}
 			}
 			else
 			{
@@ -198,8 +202,8 @@
 			g.async = true;
 			g.src = src;
 			
-		    var s = document.getElementsByTagName('script')[0];
-		    s.parentNode.insertBefore(g, s);
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(g, s);
 		};
 		
 		/**
@@ -344,8 +348,8 @@
 			padding-top:0px;
 		}
 		.geEditor ::-webkit-scrollbar {
-		    width:14px;
-		    height:14px;
+			width:14px;
+			height:14px;
 		}
 		.geEditor ::-webkit-scrollbar-track {
 			background-clip:padding-box;
@@ -404,10 +408,7 @@
 		</p>
 	</div>
 </div>
-<script
-  src="https://code.jquery.com/jquery-3.6.0.min.js"
-  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-  crossorigin="anonymous"></script>
+
 <script type="text/javascript">
 /**
  * Main
@@ -426,17 +427,6 @@ if (navigator.userAgent != null && navigator.userAgent.toLowerCase().
 }
 else
 {
-	$(function(){
-		$.ajax({
-			url: 'http://localhost:8080/drawio/cgi-bin/hello.cgi',
-			type: 'post',
-			data: '送信メッセージ'
-		}).done(function(data){
-			console.log(data);
-		}).fail(function(){
-			console.log('failed');
-		});
-	});
 	App.main();
 }
 </script>

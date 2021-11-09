@@ -1,11 +1,6 @@
 #!/Users/takeuchihiroki/.pyenv/versions/anaconda3-5.2.0/envs/Analysis/bin/python
-#/usr/bin/env python3
-#/usr/bin/python
+#/usr/bin/env python
 
-#/Users/takeuchihiroki/.pyenv/shims/python3
-#/usr/bin/env /Users/takeuchihiroki/.pyenv/shims/python
-#/Users/takeuchihiroki/.pyenv/versions/anaconda3-5.2.0/envs/Analysis/bin/python
-#/Users/takeuchihiroki/.pyenv/versions/3.8.6/bin/python
 # coding=utf-8
 
 # import cgitb
@@ -772,5 +767,4 @@ def main():
 print ('Content-Type: text/html\n')
 print ('Hello Word from Python CGI\n')
 print ('EnergyConsumptionAnalysis\n')
-print(sys.version_info)
 main()
