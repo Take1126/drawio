@@ -18,46 +18,44 @@ import DailyWorkReport as dr
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def main():
-    # ディレクトリを指定
-    electric_power_consumption_dirname = "./InputData/ElectricPower"
-    production_quantity_dirname = "./InputData/Production"
-    electric_power_data_agg_dirname = "./OutputData/ElectricPower"
-    production_quantity_data_agg_dirname = "./OutputData/ProductionQuantity/old"
-    correlation_analysis_dirname = "./OutputData/CorrelationAnalysis"
-    multi_regression_analysis_dirname = "./OutputData/MultipleRegression/MultipleRegression"
-    pre_multi_regression_analysis_dirname = "./OutputData/MultipleRegression/PreMultipleRegression"
-    fig_violinplot_dirname = "./OutputData/Figure/violinplot"
-    fig_barplot_dirname = "./OutputData/Figure/barplot"
-    fig_datacount_basicunit_dirname = "./OutputData/Figure/DataCount_BasicUnit"
-    fig_time_basicunit_dirname = "./OutputData/Figure/Time_BasicUnit"
-    fig_scatterplot_basicunit_dirname = "./OutputData/Figure/scatterplot_BasicUnit"
-    fig_scatterplot_shotcount_power_dirname = "./OutputData/Figure/scatterplot_ShotCount_Power"
-    fig_scatterplot_shotcount_power_by_mold_dirname = "./OutputData/Figure/scatterplot_ShotCount_Power_by_mold"
-    report_input_dirname = "./InputData/DailyWorkReport"
-    report_output_dirname = "./OutputData/DailyWorkReport"
+# cgi用諸設定
+import cgitb
+cgitb.enable()
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding = 'utf-8')
+print('Content-Type: text/html; charset=UTF-8\n')
+local_root_url="http://127.0.0.1:5500/WEB-INF/cgi"
 
-    #2021/8/25 1時間単位生産数量データ読み込み追加
-    production_qty_per_hour_dirname = "./InputData/Production/No24" 
-    production_qty_data_agg_per_hour_dirname = "./OutputData/ProductionQuantity/ProductionQuantity_per_hour/No24"
-    production_qty_data_agg_per_hour_not_yet_resample_dirname = "./OutputData/ProductionQuantity/Production_not_yet_resample"
-    production_qty_data_agg_per_day_dirname = "./OutputData/ProductionQuantity/ProductionQuantity_per_day/No24"
+# ディレクトリを指定
+electric_power_consumption_dirname = "./InputData/ElectricPower"
+production_quantity_dirname = "./InputData/Production"
+electric_power_data_agg_dirname = "./OutputData/ElectricPower"
+production_quantity_data_agg_dirname = "./OutputData/ProductionQuantity/old"
+correlation_analysis_dirname = "./OutputData/CorrelationAnalysis"
+multi_regression_analysis_dirname = "./OutputData/MultipleRegression/MultipleRegression"
+pre_multi_regression_analysis_dirname = "./OutputData/MultipleRegression/PreMultipleRegression"
+fig_violinplot_dirname = "./OutputData/Figure/violinplot"
+fig_barplot_dirname = "./OutputData/Figure/barplot"
+fig_datacount_basicunit_dirname = "./OutputData/Figure/DataCount_BasicUnit"
+fig_time_basicunit_dirname = "./OutputData/Figure/Time_BasicUnit"
+fig_scatterplot_basicunit_dirname = "./OutputData/Figure/scatterplot_BasicUnit"
+fig_scatterplot_shotcount_power_dirname = "./OutputData/Figure/scatterplot_ShotCount_Power"
+fig_scatterplot_shotcount_power_by_mold_dirname = "./OutputData/Figure/scatterplot_ShotCount_Power_by_mold"
+report_input_dirname = "./InputData/DailyWorkReport"
+report_output_dirname = "./OutputData/DailyWorkReport"
 
-    #-------------------------------------------------------------入力データを時系列データ化-------------------------------------------------------------#
+# 1時間単位生産数量データ読み込み追加
+production_qty_per_hour_dirname = "./InputData/Production/No24" 
+production_qty_data_agg_per_hour_dirname = "./OutputData/ProductionQuantity/ProductionQuantity_per_hour/No24"
+production_qty_data_agg_per_hour_not_yet_resample_dirname = "./OutputData/ProductionQuantity/Production_not_yet_resample"
+production_qty_data_agg_per_day_dirname = "./OutputData/ProductionQuantity/ProductionQuantity_per_day/No24"
 
-    # 1次分析データ読み込み
-    electric_power_analysis_file = os.listdir(electric_power_data_agg_dirname)
-    print("==============electric_power_analysis_file=============")
-    print(electric_power_analysis_file)
-    production_quantity_analysis_file = os.listdir(production_quantity_data_agg_dirname)
-    print("==============production_quantity_analysis_file=============")
-    print(production_quantity_analysis_file)
+# 1次分析データ（電力消費量、生産数量、1時間単位生産数量）読み込み
+electric_power_analysis_file = os.listdir(electric_power_data_agg_dirname)
+production_quantity_analysis_file = os.listdir(production_quantity_data_agg_dirname)
+production_qty_per_hour_analysis_files = os.listdir(production_qty_data_agg_per_hour_dirname)
 
-    #2021/8/25 1時間単位生産数量データ読み込み追加
-    production_qty_per_hour_analysis_files = os.listdir(production_qty_data_agg_per_hour_dirname)
-    print("==============production_qty_per_hour_analysis_file=============")
-    print(production_qty_per_hour_analysis_files)
-
+def to_time_series_data():
+        #-------------------------------------------------------------入力データを時系列データ化-------------------------------------------------------------#
     if len(production_quantity_analysis_file) == 0:
         #入力データファイル読み込み
         production_quantity_dirname_file = os.listdir(production_quantity_dirname)
@@ -90,9 +88,12 @@ def main():
         # 生産数量ファイル保存
         production_quantity_output_file.save()
     else:
-        print("=======Production_Pass=============")
+        print("=======Production_Pass=============\n")
         pass
-    
+
+    #時間毎生産数量ファイル保存設定
+    production_qty_per_hour_output_file_name ='[Confidential]Production_Quantity_per_hour_Analysis.xlsx'
+    production_qty_per_hour_output_file = pd.ExcelWriter(production_qty_data_agg_per_hour_dirname + "/" + production_qty_per_hour_output_file_name)
     #2021/8/25 1時間単位生産数量データ読み込み追加
     if len(production_qty_per_hour_analysis_files) == 0:
         #入力データファイル読み込み
@@ -135,18 +136,17 @@ def main():
         #    df_production_per_product.to_excel(production_quantity_output_file, str(production_line + "_ProductionOrder"), index = False) #2021/8/25無効化
         #else:
         #    pass
-
-        #生産数量ファイル保存設定
-        production_qty_per_hour_output_file_name ='[Confidential]Production_Quantity_per_hour_Analysis.xlsx'
-        production_qty_per_hour_output_file = pd.ExcelWriter(production_qty_data_agg_per_hour_dirname + "/" + production_qty_per_hour_output_file_name)
-
+        
         # 生産数量ファイル保存
         df_product_qty_per_hour.to_excel(production_qty_per_hour_output_file)
         production_qty_per_hour_output_file.save()
     else:
-        print("=======Production_per_hour_Pass=============")
+        print("=======Production_per_hour_Pass=============\n")
         pass
-
+    
+    #電力量ファイル保存設定
+    electric_power_output_file_name ='Electric_Power_Analysis.xlsx'
+    electric_power_output_file = pd.ExcelWriter(electric_power_data_agg_dirname + "/" + electric_power_output_file_name)
     if len(electric_power_analysis_file) == 0:
         # 入力データファイル読み込み
         electric_power_consumption_file = os.listdir(electric_power_consumption_dirname)
@@ -155,9 +155,6 @@ def main():
         # Pandasでファイル読み込み
         dict_electric_sheet_all = pd.read_excel(electric_power_consumption_file_path, sheet_name=None, header=None, names=['DateTime','PowerConsumption'], skiprows=[0,1], skipfooter=8)
 
-        #電力量ファイル保存設定
-        electric_power_output_file_name ='Electric_Power_Analysis.xlsx'
-        electric_power_output_file = pd.ExcelWriter(electric_power_data_agg_dirname + "/" + electric_power_output_file_name)
         #1時間毎の電力量計算
         df_electric_power_per_hour = ea.electric_power_per_hour_calculate(dict_electric_sheet_all)
         #1時間毎の電力量コスト計算s
@@ -171,13 +168,13 @@ def main():
         #電力量ファイル保存
         electric_power_output_file.save()
     else:
-        print("=======Electric_Power_Pass=============")
+        print("=======Electric_Power_Pass=============\n")
         pass
 
-    # 1次分析データ読み込み
-    electric_power_analysis_file = os.listdir(electric_power_data_agg_dirname)
-    production_quantity_analysis_file = os.listdir(production_quantity_data_agg_dirname)
-    production_quantity_per_hour_analysis_file = os.listdir(production_qty_data_agg_per_hour_dirname)  #2021/08/26 追記 dir → "./OutputData/ProductionQuantity_per_hour/No24"
+    # # 1次分析データ読み込み
+    # electric_power_analysis_file = os.listdir(electric_power_data_agg_dirname)
+    # production_quantity_analysis_file = os.listdir(production_quantity_data_agg_dirname)
+    # production_quantity_per_hour_analysis_file = os.listdir(production_qty_data_agg_per_hour_dirname)  #2021/08/26 追記 dir → "./OutputData/ProductionQuantity_per_hour/No24"
 
     # データファイル存在確認(2021/10/1 追加 菊地)
     report_output_file_list = os.listdir(report_output_dirname)
@@ -185,7 +182,7 @@ def main():
         # 日報情報時系列データ化(2021/10/1 追加 菊地)
         df_worker_final = dr.dailywork_report()
     else:
-        print("=======worker_report_Pass=============")
+        print("=======worker_report_Pass=============\n")
         pass
 
     #1日毎日報情報時系列データファイルパス(2021/10/1 追加)
@@ -193,9 +190,15 @@ def main():
     report_output_file = report_output_dirname + "/" + report_output_file_name
     #1日毎日報情報時系列データファイルをPandasで呼び出し(2021/10/1 追加)
     df_worker_final = pd.read_excel(report_output_file, index_col=None)
-    print("=======df_worker_final=============")
+    print("=======df_worker_final=============\n")
     print(df_worker_final.head(50))
+    print("\n")
 
+    #cgi用URL表示
+    print("生産数量："+local_root_url+production_qty_data_agg_per_hour_dirname[1:] + "/" + production_qty_per_hour_output_file_name+"\n")
+    print("電力量："+local_root_url+electric_power_data_agg_dirname[1:] + "/" + electric_power_output_file_name+"\n")
+
+def correlation_analysis_old():
     #-------------------------------------------------------------相関分析(古い、生産数量：日毎)-------------------------------------------------------------#
 
     # データファイル存在確認(2021/9/29 追加 菊地)
@@ -217,7 +220,7 @@ def main():
         #相関分析
         df_merge = ca.dataframe_join(electric_power_analysis_data,production_quantity_analysis_data)
         df_basic_unit = ca.basic_unit_calculate(df_merge)
-        print("==============相関分析==============")
+        print("==============相関分析==============\n")
         print(df_basic_unit)
 
         #相関分析ファイル保存設定
@@ -228,9 +231,10 @@ def main():
         #相関分析ファイル保存
         correlation_analysis_output_file.save()
     else:
-        print("=======correlation_analysis(old)_Pass=============")
+        print("=======correlation_analysis(old)_Pass=============\n")
         pass
 
+def correlation_analysis_per_hour():
     #-------------------------------------------------------------1時間毎相関分析-------------------------------------------------------------#
 
     # データファイル存在確認(2021/9/29 追加 菊地)⇒この中を変更した場合、"./OutputData/CorrelationAnalysis/per_hour"内のエクセルファイルを削除してください
@@ -242,14 +246,14 @@ def main():
         electric_power_per_hour_analysis_data = pd.read_excel(electric_power_analysis_file_path, sheet_name="electric_power",index_col=None) #2021/08/26 追記
 
         #1時間単位生産数量分析ファイルパス(2021/8/26 追加)
-        production_quantity_per_hour_analysis_file_path = production_qty_data_agg_per_hour_dirname + "/" + production_quantity_per_hour_analysis_file[0]
+        production_quantity_per_hour_analysis_file_path = production_qty_data_agg_per_hour_dirname + "/" + production_qty_per_hour_analysis_files[0]
         #1時間単位生産数量分析ファイルをPandasで読み込み(2021/8/26 追加)
         production_quantity_per_hour_analysis_data = pd.read_excel(production_quantity_per_hour_analysis_file_path, index_col=None)
 
         #1時間単位相関分析
         df_per_hour_merge = ca.dataframe_join(electric_power_per_hour_analysis_data,production_quantity_per_hour_analysis_data)
         df_per_hour_basic_unit = ca.basic_unit_calculate(df_per_hour_merge)
-        print("===========1時間単位相関分析===========")
+        print("===========1時間単位相関分析===========\n")
         print(df_per_hour_basic_unit)
 
         #1時間単位State/Action + Number_of_setup_changes/Setupの判定(2021/9/1 追加、2021/9/7 Number_of_setup_changes 追加)
@@ -264,7 +268,7 @@ def main():
             #時系列(全期間)の電力量原単位グラフ出力 関数化(2021/9/29 追加 菊地)
             ca.make_figure_scatterplot_basicunit(df_power_loss_per_hour)
         else:
-            print("=======figure_scatterplot_basicunit_Pass=============")
+            print("=======figure_scatterplot_basicunit_Pass=============\n")
             pass
 
         # データファイル存在確認(2021/9/29 追加 菊地)
@@ -274,7 +278,7 @@ def main():
             for month in range(1, 13):
                 ca.make_figure_per_month(df_power_loss_per_hour,month)
         else:
-            print("=======figure_time_basicunit_Pass=============")
+            print("=======figure_time_basicunit_Pass=============\n")
             pass
 
         # データファイル存在確認(2021/9/29 追加 菊地)
@@ -283,7 +287,7 @@ def main():
             #電力量原単位ヒストグラム出力(2021/9/22 追加)
             ca.make_figure_data_count(df_power_loss_per_hour)
         else:
-            print("=======figure_data_count_Pass=============")
+            print("=======figure_data_count_Pass=============\n")
             pass
 
         #gropby前加工(金型毎Action毎作成用)(2021/9/21 追加、(2021/9/27 df_pre_groupby3の条件変更)
@@ -306,7 +310,7 @@ def main():
             #金型単位の原単位ファイル保存(2021/9/21 追加)
             power_consumption_basic_unit_per_mold_file.save()
         else:
-            print("=======correlation_analysis_basicunit_per_mold_Pass=============")
+            print("=======correlation_analysis_basicunit_per_mold_Pass=============\n")
             pass
 
         # データファイル存在確認(2021/9/30 追加 菊地)
@@ -329,7 +333,7 @@ def main():
             #Action単位の原単位ファイル保存(2021/9/21 追加)
             power_consumption_basic_unit_per_action_file.save()
         else:
-            print("=======correlation_analysis_basicunit_per_action_Pass=============")
+            print("=======correlation_analysis_basicunit_per_action_Pass=============\n")
             pass
 
         # データファイル存在確認(2021/9/30 追加 菊地)
@@ -358,7 +362,7 @@ def main():
             #金型毎Action毎の原単位ファイル保存(2021/9/21 追加)
             power_consumption_basic_unit_per_mold_action_file.save()
         else:
-            print("=======correlation_analysis_basicunit_per_mold_action_Pass=============")
+            print("=======correlation_analysis_basicunit_per_mold_action_Pass=============\n")
             pass
 
         #金型毎Action毎の原単位ファイルパス(2021/9/30 追加)
@@ -389,12 +393,18 @@ def main():
         #1時間単位最終ファイル保存(2021/9/22 追加)
         correlation_analysis_per_hour_output_file.save()
     else:
-        print("=======correlation_analysis_per_hour_Pass=============")
+        print("=======correlation_analysis_per_hour_Pass=============\n")
         pass
 
     # # データファイル存在確認(2021/9/30 追加 菊地)
     # correlation_analysis_per_hour_dirname_list = os.listdir(correlation_analysis_dirname + "/per_hour")
 
+    #cgi用URL表示
+    correlation_analysis_per_hour_file_name ='[Confidential]Correlation_Analysis_per_hour.xlsx'
+    print("時間毎相関分析結果："+local_root_url+correlation_analysis_dirname[1:] + "/per_hour/" + correlation_analysis_per_hour_file_name+"\n")
+    print("可視化データ："+local_root_url+fig_time_basicunit_dirname[1:] +"\n")
+
+def correlation_analysis_per_day():
     #-------------------------------------------------------------日毎相関分析-------------------------------------------------------------#
 
     # データファイル存在確認(2021/9/29 追加 菊地)⇒この中を変更した場合、"./OutputData/CorrelationAnalysis/per_day"内のエクセルファイルを削除してください
@@ -434,7 +444,7 @@ def main():
 
         #1日単位相関分析(Mold_typeによる分類)(2021/9/7 追加、2021/9/9 編集)
         df_per_day_mold_pre_merge = ca.data_agg_per_day_mold(df_loss_time_per_hour,df_setup_time).copy()
-        print("==============df_per_day_mold_pre_merge==============")
+        print("==============df_per_day_mold_pre_merge==============\n")
         print(df_per_day_mold_pre_merge)
 
         #原単位再計算用加工(関数化 2021/9/13)
@@ -479,9 +489,8 @@ def main():
         
         #1日単位相関分析ファイル保存(2021/9/6 追加)
         correlation_analysis_per_day_output_file.save()
-
     else:
-        print("=======correlation_analysis_per_day_Pass=============")
+        print("=======correlation_analysis_per_day_Pass=============\n")
         pass
 
     #1日単位金型毎ファイルパス(2021/9/30 追加)
@@ -496,6 +505,9 @@ def main():
     #1日単位相関分析ファイルをPandasで呼び出し(2021/9/30 追加)
     df_per_day_merged = pd.read_excel(correlation_analysis_per_day_output_file, index_col=None)
 
+    return df_per_day_mold, df_per_day_merged
+
+def correlation_analysis_per_month(df_per_day_mold, df_per_day_merged):
     #-------------------------------------------------------------月毎相関分析-------------------------------------------------------------#
 
     # データファイル存在確認(2021/9/29 追加 菊地)⇒この中を変更した場合、"./OutputData/CorrelationAnalysis/per_month"内のエクセルファイルを削除してください
@@ -554,11 +566,25 @@ def main():
         #1か月単位相関分析ファイル保存(2021/9/6 追加)
         correlation_analysis_per_month_output_file.save()
     else:
-        print("=======correlation_analysis_per_month_Pass=============")
+        print("=======correlation_analysis_per_month_Pass=============\n")
         pass
 
+    #1月単位金型毎ファイルパス
+    correlation_analysis_per_month_mold_file_name ='[Confidential]Correlation_Analysis_per_month_mold.xlsx'
+    correlation_analysis_per_month_mold_output_file = correlation_analysis_dirname + "/per_month_mold/" + correlation_analysis_per_month_mold_file_name
+    #1月単位金型毎ファイルをPandasで呼び出し
+    df_per_month_mold = pd.read_excel(correlation_analysis_per_month_mold_output_file, index_col=None)
 
-    #-------------------------------------------------------------全期間相関分析-------------------------------------------------------------#
+    #1月単位相関分析ファイルパス
+    correlation_analysis_per_month_file_name ='[Confidential]Correlation_Analysis_per_month.xlsx'
+    correlation_analysis_per_month_output_file = correlation_analysis_dirname + "/per_month/" + correlation_analysis_per_month_file_name
+    #1月単位相関分析ファイルをPandasで呼び出し
+    df_per_month_merged = pd.read_excel(correlation_analysis_per_month_output_file, index_col=None)
+
+    return df_per_month_mold, df_per_month_merged
+
+def correlation_analysis_per_year(df_per_day_mold, df_per_day_merged, df_per_month_mold, df_per_month_merged):
+    #-------------------------------------------------------------全期間（一年）相関分析-------------------------------------------------------------#
 
     # データファイル存在確認(2021/9/29 追加 菊地)⇒この中を変更した場合、"./OutputData/CorrelationAnalysis/per_year"内のエクセルファイルを削除してください
     correlation_analysis_per_year_dirname_list = os.listdir(correlation_analysis_dirname + "/per_year")
@@ -629,11 +655,15 @@ def main():
             #棒グラフ出力(2021/9/29 関数化 菊地)
             ca.make_figure_barplot(df_per_year_mold_output)
         else:
-            print("=======figure_barplot_Pass=============")
+            print("=======figure_barplot_Pass=============\n")
             pass
     else:
-        print("=======correlation_analysis_per_year_Pass=============")
+        print("=======correlation_analysis_per_year_Pass=============\n")
         pass
+
+    #cgi用URL表示
+    correlation_analysis_per_year_file_name ='[Confidential]Correlation_Analysis_per_year.xlsx'
+    print("年間相関分析結果："+local_root_url+correlation_analysis_dirname[1:] + "/per_year/" + correlation_analysis_per_year_file_name+"\n")
 
     # データファイル存在確認(2021/9/29 追加 菊地)
     fig_violinplot_dirname_list = os.listdir(fig_violinplot_dirname)
@@ -641,7 +671,7 @@ def main():
         #ヴァイオリンプロット出力(2021/9/29 関数化 菊地)
         ca.make_figure_violinplot(df_per_day_mold)
     else:
-        print("=======figure_violinplot_Pass=============")
+        print("=======figure_violinplot_Pass=============\n")
         pass
 
     # データファイル存在確認(2021/9/29 追加 菊地)
@@ -650,7 +680,7 @@ def main():
         #散布図出力 関数化(2021/9/29 菊地)
         ca.make_figure_scatterplot_shotcount_power(df_per_day_merged)
     else:
-        print("=======figure_scatterplot_shotcount_power_Pass=============")
+        print("=======figure_scatterplot_shotcount_power_Pass=============\n")
         pass
 
     # データファイル存在確認(2021/9/29 追加 菊地)
@@ -659,9 +689,10 @@ def main():
         #散布図出力 関数化(2021/9/29 菊地)
         ca.make_figure_scatterplot_shotcount_power_by_mold(df_per_day_mold)
     else:
-        print("=======figure_scatterplot_shotcount_power_by_mold_Pass=============")
+        print("=======figure_scatterplot_shotcount_power_by_mold_Pass=============\n")
         pass
 
+def multiple_regression_analysis(df_per_day_merged):
     #-------------------------------------------------------------重回帰分析-------------------------------------------------------------#
 
 	# #重回帰分析(古い)
@@ -688,7 +719,7 @@ def main():
         #1年単位相関分析ファイル保存(2021/9/6 追加)
         production_quantity_analysis_file_new.save()
     else:
-        print("=======production_qty_data_agg_per_day_Pass=============")
+        print("=======production_qty_data_agg_per_day_Pass=============\n")
         pass
 
 
@@ -701,7 +732,7 @@ def main():
     electric_multi_regression_analysis_data = pd.read_excel(electric_power_analysis_file_path, sheet_name="MultiRegressionAnalysis",index_col=None)
     if len(pre_multi_regression_analysis_dirname_list) == 0 and len(production_qty_data_agg_per_day_dirname_list) != 0:
         # 1次分析データ読み込み
-        electric_power_analysis_file = os.listdir(electric_power_data_agg_dirname)
+        # electric_power_analysis_file = os.listdir(electric_power_data_agg_dirname)
         production_quantity_analysis_file_new = os.listdir(production_qty_data_agg_per_day_dirname)
         #生産数量分析ファイルパス
         production_quantity_analysis_file_path_new = production_qty_data_agg_per_day_dirname + "/" + production_quantity_analysis_file_new[0]
@@ -731,7 +762,7 @@ def main():
         df_explanatory_objective_var_new.to_excel(out_file, "explanatory_objective_var", index = False)
         out_file.save()
     else:
-        print("=======multiple_regression_analysis_Pass=============")
+        print("=======multiple_regression_analysis_Pass=============\n")
         pass
 
 	# #重回帰分析説明変数データファイル出力(古い)
@@ -746,7 +777,14 @@ def main():
     #     for line in s:
     #         f.write(line)
 
+def main():
+    to_time_series_data()
+    correlation_analysis_old()
+    correlation_analysis_per_hour()
+    df_per_day_mold, df_per_day_merged=correlation_analysis_per_day()
+    df_per_month_mold, df_per_month_merged=correlation_analysis_per_month(df_per_day_mold, df_per_day_merged)
+    correlation_analysis_per_year(df_per_day_mold, df_per_day_merged, df_per_month_mold, df_per_month_merged)
+    multiple_regression_analysis(df_per_day_merged)
 
-# 直接実行されたとき、メイン関数呼び出し
 if __name__ == '__main__':
 	main()
