@@ -133,6 +133,7 @@ def main():
         production_qty_per_hour_not_yet_resample_output_file.save()
 
         #生産数量データの1時間単位のResampling
+        global df_product_qty_per_hour
         df_product_qty_per_hour = pa.production_per_hour_calculate(df_not_yet_resumple)
         #各ライン毎の生産数量計算
         #df_production_number = pa.production_number_calculte(production_sheet) #2021/8/25無効化
@@ -763,8 +764,50 @@ def main():
 # if __name__ == '__main__':
 # 	main()
 
-
-print ('Content-Type: text/html\n')
+print('Content-Type: text/html; charset=UTF-8\n')
 print ('Hello Word from Python CGI\n')
-print ('EnergyConsumptionAnalysis\n')
+# print ('EnergyConsumptionAnalysis\n')
 main()
+
+# table=df_product_qty_per_hour.to_html
+# # print(table)
+
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+# # print('Content-Type: text/html; charset=UTF-8\n')
+# html_body = """
+# <!DOCTYPE html>
+# <html>
+# <head>
+# </haed>
+# <body>
+# aaa
+# </body>
+# </html>
+# """
+
+# # form = cgi.FieldStorage()
+# # text = form.getvalue('text', '')
+
+# # print(html_body % (df_product_qty_per_hour.to_html))
+# print(html_body)
+
+# import cgi
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+# # print('Content-Type: text/html; charset=UTF-8\n')
+# html_body = """
+# <!DOCTYPE html>
+# <html>
+# <head>
+# </haed>
+# <body>
+# <h1>Your input is "%s"</h1>
+# </body>
+# </html>
+# """
+
+# form = cgi.FieldStorage()
+# text = form.getvalue('text', '')
+
+# print(html_body % (text))
+# print(df_product_qty_per_hour.to_html())

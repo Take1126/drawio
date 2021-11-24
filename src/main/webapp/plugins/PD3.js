@@ -1908,7 +1908,6 @@ Actions.prototype.init = function() {
     }, null, null, null);
     this.addAction("callPython", function() {
         b.callPython();
-        // b.setSelectionCells(b.callPython());
     }, null, null, null);
 
     this.addAction("clearDefaultStyle", function() {
@@ -2516,6 +2515,14 @@ Menus.prototype.addPopupMenuStyleItems = function(a, c, d) {
                     // data: '送信メッセージ',
                 }).done(function(data) {
                     console.log(data);
+                    location.href = 'http://127.0.0.1:5500/WEB-INF/cgi/OutputData/CorrelationAnalysis/per_year_mold/[Confidential]Correlation_Analysis_per_year_mold.xlsx';
+                    // // ファイル出力
+                    // let ary = data.split(''); // 配列形式に変換（後述のBlobで全要素出力）
+                    // let blob = new Blob(ary, { type: "text/plan" }); // テキスト形式でBlob定義
+                    // let link = document.createElement('a'); // HTMLのaタグを作成
+                    // link.href = URL.createObjectURL(blob); // aタグのhref属性を作成
+                    // link.download = 'test.txt'; // aタグのdownload属性を作成
+                    // link.click(); // 定義したaタグをクリック（実行）
                 }).fail(function() {
                     console.log('failed');
                 });
