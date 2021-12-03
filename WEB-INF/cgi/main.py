@@ -44,10 +44,11 @@ report_input_dirname = "./InputData/DailyWorkReport"
 report_output_dirname = "./OutputData/DailyWorkReport"
 
 # 1時間単位生産数量データ読み込み追加
-production_qty_per_hour_dirname = "./InputData/Production/No24" 
-production_qty_data_agg_per_hour_dirname = "./OutputData/ProductionQuantity/ProductionQuantity_per_hour/No24"
+line_number="No24"
+production_qty_per_hour_dirname = "./InputData/Production/"+line_number 
+production_qty_data_agg_per_hour_dirname = "./OutputData/ProductionQuantity/ProductionQuantity_per_hour/"+line_number 
 production_qty_data_agg_per_hour_not_yet_resample_dirname = "./OutputData/ProductionQuantity/Production_not_yet_resample"
-production_qty_data_agg_per_day_dirname = "./OutputData/ProductionQuantity/ProductionQuantity_per_day/No24"
+production_qty_data_agg_per_day_dirname = "./OutputData/ProductionQuantity/ProductionQuantity_per_day/"+line_number 
 
 # 1次分析データ（電力消費量、生産数量、1時間単位生産数量）読み込み
 electric_power_analysis_file = os.listdir(electric_power_data_agg_dirname)
@@ -198,42 +199,6 @@ def to_time_series_data():
     print("生産数量："+local_root_url+production_qty_data_agg_per_hour_dirname[1:] + "/" + production_qty_per_hour_output_file_name+"\n")
     print("電力量："+local_root_url+electric_power_data_agg_dirname[1:] + "/" + electric_power_output_file_name+"\n")
 
-def correlation_analysis_old():
-    #-------------------------------------------------------------相関分析(古い、生産数量：日毎)-------------------------------------------------------------#
-
-    # データファイル存在確認(2021/9/29 追加 菊地)
-    correlation_analysis_old_file_list = os.listdir(correlation_analysis_dirname + "/old")
-    if len(correlation_analysis_old_file_list) == 0:
-        #電力量分析ファイルパス
-        electric_power_analysis_file_path = electric_power_data_agg_dirname + "/" + electric_power_analysis_file[0]
-        #電力量分析ファイルをPandasで読み込み
-        electric_power_analysis_data = pd.read_excel(electric_power_analysis_file_path, sheet_name="electric_power_analysis",index_col=None)
-        electric_multi_regression_analysis_data = pd.read_excel(electric_power_analysis_file_path, sheet_name="MultiRegressionAnalysis",index_col=None)
-        # electric_power_per_hour_analysis_data = pd.read_excel(electric_power_analysis_file_path, sheet_name="electric_power",index_col=None) #2021/08/26 追記
-
-        #生産数量分析ファイルパス
-        production_quantity_analysis_file_path = production_quantity_data_agg_dirname + "/" + production_quantity_analysis_file[0]
-        #生産数量分析ファイルをPandasで読み込み
-        production_quantity_analysis_data = pd.read_excel(production_quantity_analysis_file_path, sheet_name="24SC_ProductionAnalysis",index_col=None)
-        production_multi_regression_analysis_data = pd.read_excel(production_quantity_analysis_file_path, sheet_name="24SC_ProductionOrder",index_col=None)
-
-        #相関分析
-        df_merge = ca.dataframe_join(electric_power_analysis_data,production_quantity_analysis_data)
-        df_basic_unit = ca.basic_unit_calculate(df_merge)
-        print("==============相関分析==============\n")
-        print(df_basic_unit)
-
-        #相関分析ファイル保存設定
-        correlation_analysis_file_name ='[Confidential]Correlation_Analysis.xlsx'
-        correlation_analysis_output_file = pd.ExcelWriter(correlation_analysis_dirname + "/old/" + correlation_analysis_file_name)
-        df_basic_unit.to_excel(correlation_analysis_output_file, "correlation_analysis", index = False)
-        
-        #相関分析ファイル保存
-        correlation_analysis_output_file.save()
-    else:
-        print("=======correlation_analysis(old)_Pass=============\n")
-        pass
-
 def correlation_analysis_per_hour():
     #-------------------------------------------------------------1時間毎相関分析-------------------------------------------------------------#
 
@@ -261,7 +226,9 @@ def correlation_analysis_per_hour():
 
         #電力消費量ロス(Startup_loss/Down_loss/Setup_loss/Run_loss)の計算(2021/9/7 追加)
         df_power_loss_per_hour = ca.calc_loss(df_per_hour_state_action) 
+#　ここまでで分析終わっている…？ここから再計算する意味がわからない…。
 
+# 画像出力
         # データファイル存在確認(2021/9/29 追加 菊地)
         fig_scatterplot_basicunit_dirname_list = os.listdir(fig_scatterplot_basicunit_dirname)
         if len(fig_scatterplot_basicunit_dirname_list) == 0:
@@ -289,7 +256,10 @@ def correlation_analysis_per_hour():
         else:
             print("=======figure_data_count_Pass=============\n")
             pass
+# 画像出力終わり
 
+
+# ここから何しているのかわからない。金型毎アクション値毎に
         #gropby前加工(金型毎Action毎作成用)(2021/9/21 追加、(2021/9/27 df_pre_groupby3の条件変更)
         df_pre_groupby1 = df_power_loss_per_hour[df_power_loss_per_hour['Setup_flag'] != 1].copy()
         df_pre_groupby2 = df_pre_groupby1[(df_pre_groupby1['Action'] == 4) | (df_pre_groupby1['Action'] == 8) | (df_pre_groupby1['Action'] == 12)].copy()
@@ -368,11 +338,13 @@ def correlation_analysis_per_hour():
         #金型毎Action毎の原単位ファイルパス(2021/9/30 追加)
         power_consumption_basic_unit_per_mold_action_file_name ='[Confidential]Power_Consumption_Basic_Unit_per_Mold_Action.xlsx'
         power_consumption_basic_unit_per_mold_action_file = correlation_analysis_dirname + "/basicunit_per_mold_action/" + power_consumption_basic_unit_per_mold_action_file_name
+#これらのファイルがなんなのかがわからない…5と5_2が何を意味している…？        
         #金型毎Action毎の原単位ファイルをPandasで呼び出し(2021/9/30 追加)
         df_basicunit_per_mold_action5 = pd.read_excel(power_consumption_basic_unit_per_mold_action_file, index_col=None, sheet_name="per_mold_action(BasicUnit)")
         df_basicunit_per_mold_action5_2 = pd.read_excel(power_consumption_basic_unit_per_mold_action_file, index_col=None, sheet_name="setup_per_mold(BasicUnit)")
         df_power_per_mold_action = pd.read_excel(power_consumption_basic_unit_per_mold_action_file, index_col=None, sheet_name="per_mold_action(Power)")
 
+# この辺全てrunlossになってる…？それぞれのlossがどれ（立ち上がりとか）に対応しているのかよくわからない。
         #Run_loss再計算(2021/9/22 追加)
         df_modified_runloss_per_hour = ca.runloss_calculate_per_mold_action(df_basicunit_per_mold_action5,df_power_loss_per_hour)
 
@@ -779,7 +751,6 @@ def multiple_regression_analysis(df_per_day_merged):
 
 def main():
     to_time_series_data()
-    correlation_analysis_old()
     correlation_analysis_per_hour()
     df_per_day_mold, df_per_day_merged=correlation_analysis_per_day()
     df_per_month_mold, df_per_month_merged=correlation_analysis_per_month(df_per_day_mold, df_per_day_merged)
