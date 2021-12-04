@@ -1,0 +1,43 @@
+                          OLS Regression Results                          
+Dep. Variable:   ,PowerConsumption,  R-squared (uncentered):     ,   0.954
+Model:           ,OLS             ,  Adj. R-squared (uncentered):,   0.946
+Method:          ,Least Squares   ,  F-statistic:                ,   116.9
+Date:            ,Tue, 14 Sep 2021,  Prob (F-statistic):         ,4.28e-62
+Time:            ,14:19:57        ,  Log-Likelihood:             , -682.60
+No. Observations:,   125          ,  AIC:                        ,   1403.
+Df Residuals:    ,   106          ,  BIC:                        ,   1457.
+Df Model:        ,    19          ,                              ,        
+Covariance Type: ,nonrobust       ,                              ,        
+                         ,   coef   , std err ,    t    ,P>|t| ,  [0.025 ,  0.975] 
+ProductionQty_MA58D199G03,    0.0015,    0.000,    5.900, 0.000,    0.001,    0.002
+ProductionQty_MA15C793G05,    0.0010,    0.000,    2.591, 0.011,    0.000,    0.002
+ProductionQty_M682D603G01,    0.0015,    0.000,    5.683, 0.000,    0.001,    0.002
+ProductionQty_M682D603G02,    0.0022,    0.000,   12.270, 0.000,    0.002,    0.003
+ProductionQty_M611B023H41,    0.0015,    0.000,   10.416, 0.000,    0.001,    0.002
+ProductionQty_M611C489H13,    0.0025,    0.000,    7.948, 0.000,    0.002,    0.003
+ProductionQty_M611C027H41,    0.0019,    0.000,    4.565, 0.000,    0.001,    0.003
+ProductionQty_M661C507H21,    0.0024,    0.000,    7.864, 0.000,    0.002,    0.003
+ProductionQty_MA13D503G03,    0.0033,    0.001,    5.656, 0.000,    0.002,    0.004
+ProductionQty_M611C115H13,    0.0029,    0.001,    4.697, 0.000,    0.002,    0.004
+ProductionQty_M661C239H21,    0.0025,    0.001,    4.249, 0.000,    0.001,    0.004
+ProductionQty_M600D781G01,    0.0021,    0.001,    3.510, 0.001,    0.001,    0.003
+ProductionQty_MA15C793G04,    0.0008,    0.000,    3.102, 0.002,    0.000,    0.001
+ProductionQty_MA13D503G04,    0.0020,    0.001,    3.873, 0.000,    0.001,    0.003
+ProductionQty_MA58D199G04,    0.0013,    0.000,    3.697, 0.000,    0.001,    0.002
+ProductionQty_M661D158H21,    0.0023,    0.001,    2.429, 0.017,    0.000,    0.004
+ProductionQty_M661D301H12,    0.0039,    0.001,    3.008, 0.003,    0.001,    0.006
+ProductionQty_MA13D517G01,    0.0278,    0.006,    4.922, 0.000,    0.017,    0.039
+ProductionQty_MA13D517G04,    0.0156,    0.008,    2.022, 0.046,    0.000,    0.031
+ProductionQty_MA13D517G02,    0.0010,    0.001,    2.022, 0.046, 1.96e-05,    0.002
+ProductionQty_M611C301H42,    0.0040,    0.001,    3.008, 0.003,    0.001,    0.007
+ProductionQty_M611C103H12,    0.0023,    0.001,    2.429, 0.017,    0.000,    0.004
+Omnibus:      , 0.158,  Durbin-Watson:     ,   2.478
+Prob(Omnibus):, 0.924,  Jarque-Bera (JB):  ,   0.168
+Skew:         ,-0.081,  Prob(JB):          ,   0.919
+Kurtosis:     , 2.920,  Cond. No.          ,3.14e+20
+
+Notes:
+[1] R² is computed without centering (uncentered) since the model does not contain a constant.
+[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[3] The smallest eigenvalue is 8.41e-30. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.

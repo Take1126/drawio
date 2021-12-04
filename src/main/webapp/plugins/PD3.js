@@ -40,7 +40,7 @@ var EP_URI = "",
     title_val,
     creator_val,
     description_val,
-    identifier_val,
+    eptype_val,
     root_style = [];
 
 /*---------------------
@@ -263,11 +263,31 @@ Sidebar.prototype.addProblemSolvingLayerPalette = function(expand) {
         }),
         this.createVertexTemplateEntry('swimlane;pd3layer=topic;pd3type=container;containertype=specialization;fillColor=#ffe6cc;strokeColor=#d79b00;', 400, container_height, 'Label of Parent Action Box', 'Problem-Solving Container', null, null, 'container swimlane lane pool group'),
         this.createVertexTemplateEntry(
-            "rounded=0;whiteSpace=wrap;html=1;pd3layer=topic;pd3type=object;strokeColor=#d79b00;dashed=1;fontSize=14;fillColor=none;strokeWidth=1;",
+            "rounded=0;whiteSpace=wrap;html=1;pd3layer=topic;pd3type=knowledge;strokeColor=#d79b00;dashed=1;fontSize=14;fillColor=none;strokeWidth=1;",
             object_width,
             object_height,
-            "Object",
-            "Object",
+            "Knowledge",
+            "Knowledge",
+            null,
+            null,
+            "rect rectangle box"
+        ),
+        this.createVertexTemplateEntry(
+            "labelPosition=center;html=1;shape=mxgraph.basic.frame;dx=3;pd3layer=topic;pd3type=engineer;strokeColor=#d79b00;fontSize=14;fillColor=none;strokeWidth=1;",
+            object_width,
+            object_height,
+            "Engineer",
+            "Engineer",
+            null,
+            null,
+            "rect rectangle box"
+        ),
+        this.createVertexTemplateEntry(
+            "rounded=0;whiteSpace=wrap;html=1;pd3layer=topic;pd3type=tool;strokeColor=#d79b00;dashed=1;fontSize=14;fillColor=none;strokeWidth=1;",
+            object_width,
+            object_height,
+            "Tool",
+            "Tool",
             null,
             null,
             "rect rectangle box"
@@ -330,11 +350,31 @@ Sidebar.prototype.addInformationLayerPalette = function(expand) {
         }),
         this.createVertexTemplateEntry('swimlane;pd3layer=info;pd3type=container;containertype=specialization;fillColor=#dae8fc;strokeColor=#6c8ebf;', 400, container_height, 'Label of Parent Action Box', 'Information Operation Container', null, null, 'container swimlane lane pool group'),
         this.createVertexTemplateEntry(
-            "rounded=0;whiteSpace=wrap;html=1;pd3layer=info;pd3type=object;strokeColor=#6c8ebf;dashed=1;fontSize=14;fillColor=none;strokeWidth=1;",
+            "rounded=0;whiteSpace=wrap;html=1;pd3layer=info;pd3type=knowledge;strokeColor=#6c8ebf;dashed=1;fontSize=14;fillColor=none;strokeWidth=1;",
             object_width,
             object_height,
-            "Object",
-            "Object",
+            "Knowledge",
+            "Knowledge",
+            null,
+            null,
+            "rect rectangle box"
+        ),
+        this.createVertexTemplateEntry(
+            "labelPosition=center;html=1;shape=mxgraph.basic.frame;dx=3;pd3layer=topic;pd3type=engineer;strokeColor=#6c8ebf;fontSize=14;fillColor=none;strokeWidth=1;",
+            object_width,
+            object_height,
+            "Engineer",
+            "Engineer",
+            null,
+            null,
+            "rect rectangle box"
+        ),
+        this.createVertexTemplateEntry(
+            "rounded=0;whiteSpace=wrap;html=1;pd3layer=info;pd3type=tool;strokeColor=#6c8ebf;dashed=1;fontSize=14;fillColor=none;strokeWidth=1;",
+            object_width,
+            object_height,
+            "Tool",
+            "Tool",
             null,
             null,
             "rect rectangle box"
@@ -399,11 +439,31 @@ Sidebar.prototype.addPhysicalLayerPalette = function(expand) {
         }),
         this.createVertexTemplateEntry('swimlane;pd3layer=phys;pd3type=container;containertype=specialization;fillColor=#d5e8d4;strokeColor=#82b366;', 400, container_height, 'Label of Parent Action Box', 'Physical Operation Container', null, null, 'container swimlane lane pool group'),
         this.createVertexTemplateEntry(
-            "rounded=0;whiteSpace=wrap;html=1;pd3layer=phys;pd3type=object;strokeColor=#82b366;dashed=1;fontSize=14;fillColor=none;",
+            "rounded=0;whiteSpace=wrap;html=1;pd3layer=phys;pd3type=knowledge;strokeColor=#82b366;dashed=1;fontSize=14;fillColor=none;",
             object_width,
             object_height,
-            "Object",
-            "Object",
+            "Knowledge",
+            "Knowledge",
+            null,
+            null,
+            "rect rectangle box"
+        ),
+        this.createVertexTemplateEntry(
+            "labelPosition=center;html=1;shape=mxgraph.basic.frame;dx=3;pd3layer=topic;pd3type=engineer;strokeColor=#82b366;fontSize=14;fillColor=none;strokeWidth=1;",
+            object_width,
+            object_height,
+            "Engineer",
+            "Engineer",
+            null,
+            null,
+            "rect rectangle box"
+        ),
+        this.createVertexTemplateEntry(
+            "rounded=0;whiteSpace=wrap;html=1;pd3layer=phys;pd3type=tool;strokeColor=#82b366;dashed=1;fontSize=14;fillColor=none;",
+            object_width,
+            object_height,
+            "Tool",
+            "Tool",
             null,
             null,
             "rect rectangle box"
@@ -836,7 +896,6 @@ EditorUi.prototype.updateActionStates = function() {
     this.actions.get("setProblemSolvingContainer").setEnabled(1 == a.getSelectionCount());
     this.actions.get("setInformationOperationContainer").setEnabled(1 == a.getSelectionCount());
     this.actions.get("setPhysicalOperationContainer").setEnabled(1 == a.getSelectionCount());
-    this.actions.get("callPython").setEnabled(1 == a.getSelectionCount());
     this.actions.get("clearWaypoints").setEnabled(!a.isSelectionEmpty());
     this.actions.get("copySize").setEnabled(1 == a.getSelectionCount());
     this.actions.get("turn").setEnabled(!a.isSelectionEmpty());
@@ -1388,29 +1447,29 @@ Actions.prototype.init = function() {
         graphModel.init()
     }), null, null, null);
 
-    this.addAction("editidentifier", mxUtils.bind(this, function() {
+    this.addAction("editeptype", mxUtils.bind(this, function() {
         var graph = b;
         var graphModel = graph.getModel();
         root = graphModel.root;
         root_style = setStyleArray(root);
         if (root_style != null) {
-            if ("identifier" in root_style) {
-                var identifier_val = root_style["identifier"];
+            if ("eptype" in root_style) {
+                var eptype_val = root_style["eptype"];
             } else {
-                identifier_val = "";
+                eptype_val = "";
             }
         } else {
             root_style = {};
-            identifier_val = "";
+            eptype_val = "";
         }
-        graphModel = new TextareaDialog(this.editorUi, "Edit identifier:", identifier_val, function(graphModel) {
+        graphModel = new TextareaDialog(this.editorUi, "Edit eptype:", eptype_val, function(graphModel) {
             var input = mxUtils.ltrim(graphModel);
             input = input.replace(/\r?\n/g, "");
             if (input != "") {
-                root_style["identifier"] = input;
-                mxUtils.setTextContent(EP_URI_identifier_div, "Identifier : " + input);
+                root_style["eptype"] = input;
+                mxUtils.setTextContent(EP_URI_eptype_div, "EPtype : " + input);
             } else {
-                mxUtils.setTextContent(EP_URI_identifier_div, "Identifier : none");
+                mxUtils.setTextContent(EP_URI_eptype_div, "EPtype : none");
             }
 
             root.style = setStyleString(root_style);
@@ -1440,13 +1499,37 @@ Actions.prototype.init = function() {
     });
     this.addAction("editLink...", function() {
         if (b.isEnabled() && !b.isSelectionEmpty()) {
-            var a = b.getSelectionCell(),
+            selectedCell = b.getSelectionCell()
+                // if (selectedCell.style.indexOf('pd3type=tool') !== -1) {
+            if (typeof(selectedCell.value) === 'object' && b.getLinkForCell(selectedCell)) {
+                filePath = selectedCell.value.outerHTML.match(/label=\"(.*)\" link/)[1].replace(/ /g, '-')
+                d = `http://localhost:3000/open/${filePath}`
+            } else if (typeof(selectedCell.value) === 'object' && !b.getLinkForCell(selectedCell)) {
+                filePath = selectedCell.value.outerHTML.match(/label=\"(.*)\"/)[1].replace(/ /g, '-')
+                d = `http://localhost:3000/open/${filePath}`
+            } else if (selectedCell.style.indexOf('pd3type=action') !== -1) {
+                selectedCell.edges.forEach((edge) => {
+                    if (edge.source && edge.source.style.indexOf('pd3type=tool') !== -1) {
+                        filePath = typeof(edge.source.value) === 'string' ? edge.source.value.replace(/ /g, '-') : edge.source.value.outerHTML.match(/label=\"(.*)\" link/)[1].replace(/ /g, '-')
+                    }
+                    // else if (edge.target.id === selectedCell.id && edge.style.indexOf('entryX=0;entryY=0.5;') !== -1) {
+                    //     filePath = edge.value.replace(/\//g, '-')
+                    // }
+                })
+                d = `http://localhost:3000/exec/${filePath}`
+            } else {
+                filePath = selectedCell.value.replace(/ /g, '-')
+                d = `http://localhost:3000/open/${filePath}`
+            }
+            a = selectedCell
+        } else {
+            var a = selectedCell,
                 d = b.getLinkForCell(a) || "";
-            c.showLinkDialog(d, mxResources.get("apply"), function(c) {
-                c = mxUtils.trim(c);
-                b.setLinkForCell(a, 0 < c.length ? c : null)
-            })
         }
+        c.showLinkDialog(d, mxResources.get("apply"), function(c) {
+            c = mxUtils.trim(c);
+            b.setLinkForCell(a, 0 < c.length ? c : null)
+        })
     }, null, null, "Alt+Shift+L");
     this.put("insertImage", new Action(mxResources.get("image") + "...", function() {
         b.isEnabled() && !b.isCellLocked(b.getDefaultParent()) && (b.clearSelection(), c.actions.get("image").funct())
@@ -1896,6 +1979,58 @@ Actions.prototype.init = function() {
         }
     }), null, null, null);
 
+    this.addAction("editID", mxUtils.bind(this, function() {
+        var graph = b;
+        var selectedCells = graph.getSelectionCells();
+        // console.log(setStyleArray(selectedCells[0]));
+        var cell = selectedCells[0];
+        var cell_style = setStyleArray(selectedCells[0]);
+        console.log(cell.id);
+        var id_val = cell.id;
+        if (null != a && 0 < a.length) {
+            var graphModel = graph.getModel();
+            root = this.editorUi.editor.graph.getModel().root;
+            root_style = setStyleArray(root);
+            graphModel = new TextareaDialog(this.editorUi, "edit id:", id_val, function(graphModel) {
+                var id_tmp = mxUtils.ltrim(graphModel);
+                cell.id = id_tmp;
+                if (id_tmp != "") {
+                    //  selectedCells[0].id = id_tmp;
+                    mxUtils.setTextContent(id_div, "id : \r\n");
+
+                    if (root_style != null) {
+                        // if("URI" in root_style){
+                        //   URI_val = root_style["URI"];
+                        // }else{
+                        //   URI_val = "";
+                        // }
+                        if ("prefix" in root_style) {
+                            prefix_val = root_style["prefix"];
+                        } else {
+                            prefix_val = "";
+                        }
+                    } else {
+                        // URI_val = "";
+                        prefix_val = "";
+                    }
+
+                    if (prefix_val == "") {
+                        str = "";
+                    } else {
+                        str = "[" + prefix_val + "]";
+                    }
+                    textbox = document.getElementById('id')
+                    textbox.value = str + id_tmp
+                } else {
+                    mxUtils.setTextContent(id_div, "id : none");
+                }
+
+            }, null, null, 400, 220);
+            this.editorUi.showDialog(graphModel.container, 420, 300, !0, !0);
+            graphModel.init()
+        }
+    }), null, null, null);
+
     /***Set Container in the Same Layer***/
     this.addAction("setProblemSolvingContainer", function() {
         b.setSelectionCells(b.setProblemSolvingContainer());
@@ -1905,9 +2040,6 @@ Actions.prototype.init = function() {
     }, null, null, null);
     this.addAction("setPhysicalOperationContainer", function() {
         b.setSelectionCells(b.setPhysicalOperationContainer());
-    }, null, null, null);
-    this.addAction("callPython", function() {
-        b.callPython();
     }, null, null, null);
 
     this.addAction("clearDefaultStyle", function() {
@@ -2029,7 +2161,7 @@ Actions.prototype.init = function() {
 
 
 Menus.prototype.addPopupMenuStyleItems = function(a, c, d) {
-    1 == this.editorUi.editor.graph.getSelectionCount() ? this.addMenuItems(a, ["-", "setAsDefaultStyle", "-", "setProblemSolvingContainer", "setInformationOperationContainer", "setPhysicalOperationContainer", "-", "callPython"], null, d) : this.editorUi.editor.graph.isSelectionEmpty() && this.addMenuItems(a, ["-", "clearDefaultStyle"], null, d)
+    1 == this.editorUi.editor.graph.getSelectionCount() ? this.addMenuItems(a, ["-", "setAsDefaultStyle", "-", "setProblemSolvingContainer", "setInformationOperationContainer", "setPhysicalOperationContainer"], null, d) : this.editorUi.editor.graph.isSelectionEmpty() && this.addMenuItems(a, ["-", "clearDefaultStyle"], null, d)
 };
 
 (function() {
@@ -2503,30 +2635,6 @@ Menus.prototype.addPopupMenuStyleItems = function(a, c, d) {
             this.addCell(edge);
 
             return cell, edge;
-        };
-
-        //to call python code
-        q.callPython = function(b, c) {
-            console.log("calling python");
-            $(function() {
-                $.ajax({
-                    url: 'http://localhost:8080/drawio/cgi-bin/hello.cgi',
-                    type: 'get',
-                    // data: '送信メッセージ',
-                }).done(function(data) {
-                    console.log(data);
-                    location.href = 'http://127.0.0.1:5500/WEB-INF/cgi/OutputData/CorrelationAnalysis/per_year_mold/[Confidential]Correlation_Analysis_per_year_mold.xlsx';
-                    // // ファイル出力
-                    // let ary = data.split(''); // 配列形式に変換（後述のBlobで全要素出力）
-                    // let blob = new Blob(ary, { type: "text/plan" }); // テキスト形式でBlob定義
-                    // let link = document.createElement('a'); // HTMLのaタグを作成
-                    // link.href = URL.createObjectURL(blob); // aタグのhref属性を作成
-                    // link.download = 'test.txt'; // aタグのdownload属性を作成
-                    // link.click(); // 定義したaタグをクリック（実行）
-                }).fail(function() {
-                    console.log('failed');
-                });
-            });
         };
 
         //親アクションのエンジニアリングサイクルコンテナを設置する
@@ -5676,6 +5784,23 @@ Menus.prototype.addPopupMenuStyleItems = function(a, c, d) {
         var q = StyleFormatPanel.prototype.addStyleOps;
         StyleFormatPanel.prototype.addStyleOps = function(a) {
 
+            // d = mxUtils.button("Edit ID", mxUtils.bind(this, function (a) {
+            //   this.editorUi.actions.get("editID").funct()
+            // }));
+            // d.setAttribute("title", "editID");
+            // d.style.marginBottom = "9px";
+            // d.style.width = "202px";
+            // d.style.height = "20px";
+            // d.style.backgroundColor="rgb(79 79 79)";
+            // d.style.borderColor="rgb(37 37 37)";
+            // d.style.color="white";
+            // // d.style.backgroundColor="rgb(255 255 255)";
+            // // d.style.borderColor="rgb(37 37 37)";
+            // d.style.borderRadius="3px";
+            // d.style.borderWidth="thin";
+            // a.appendChild(d);
+            // mxUtils.br(a);
+
             d = mxUtils.button(mxResources.get("editseeAlso"), mxUtils.bind(this, function(a) {
                 this.editorUi.actions.get("editseeAlso").funct()
             }));
@@ -7497,6 +7622,33 @@ Menus.prototype.addPopupMenuStyleItems = function(a, c, d) {
             if ("xml" == a) {
                 var m = '<?xml version="1.0" encoding="UTF-8"?>\n' + this.getFileData(!0, null, null, null, e, f, null, null, null, b);
                 this.saveData(g, a, m, "text/xml")
+            } else if ("rdf" == a) {
+                g = d + "." + "ttl";
+                var m = '<?xml version="1.0" encoding="UTF-8"?>\n' + this.getFileData(!0, null, null, null, e, f, null, null, null, b);
+                result = $.ajax({
+                    type: 'get',
+                    url: 'http://localhost:3000/tordf',
+                    data: { file: m },
+                    success: function(data) {
+                        return data
+                    },
+                    async: false
+                });
+                rdf = result.responseText.replace('["', '').replace('"]', '').replace(/","/g, '\n').replace(/\\"/g, '"').replace(/ \.\n/g, ' .\n\n').replace(/\n@/g, '@').replace(/\\"/g, "'");
+                url = encodeURI(`http://localhost:3030/akiyama/data?graph=${d}`)
+                $.ajax({
+                    type: 'post',
+                    url: url,
+                    contentType: 'text/turtle',
+                    data: rdf,
+                    success: function(data) {
+                        console.log("uploaded!");
+                    }
+                });
+                // g: filename
+                // a: "rdf"
+                this.saveData(g, a, rdf, "text/turtle");
+
             } else if ("html" == a) m = this.getHtml2(this.getFileData(!0), this.editor.graph, d), this.saveData(g, a, m, "text/html");
             else if ("svg" != a && "xmlsvg" != a || !this.spinner.spin(document.body, mxResources.get("export"))) "xmlpng" == a ? g = d + ".png" : "jpeg" == a && (g = d + ".jpg"), this.saveRequest(g, a, mxUtils.bind(this, function(d, b) {
                 try {
@@ -12086,6 +12238,26 @@ Menus.prototype.addPopupMenuStyleItems = function(a, c, d) {
         //   }), null, mxResources.get("export"));
         //   b.showDialog(a.container, 300, 180, !0, !0)
         // }));
+        b.actions.put("exportRdf", new Action(mxResources.get("formatRdf") + "...", function() {
+            var a = document.createElement("div");
+            a.style.whiteSpace = "nowrap";
+            var c = null == b.pages || 1 >= b.pages.length,
+                d = document.createElement("h3");
+            mxUtils.write(d, mxResources.get("formatRdf"));
+            d.style.cssText = "width:100%;text-align:center;margin-top:0px;margin-bottom:4px";
+            a.appendChild(d);
+            var e = b.addCheckbox(a, mxResources.get("selectionOnly"), !1, k.isSelectionEmpty()),
+                f = b.addCheckbox(a, mxResources.get("compressed"), !0),
+                g = b.addCheckbox(a, mxResources.get("allPages"), !c, c);
+            g.style.marginBottom = "16px";
+            mxEvent.addListener(e, "change", function() {
+                e.checked ? g.setAttribute("disabled", "disabled") : g.removeAttribute("disabled")
+            });
+            a = new CustomDialog(b, a, mxUtils.bind(this, function() {
+                b.downloadFile("rdf", !f.checked, null, !e.checked, c || !g.checked)
+            }), null, mxResources.get("export"));
+            b.showDialog(a.container, 300, 180, !0, !0)
+        }));
         b.actions.put("exportUrl", new Action(mxResources.get("url") + "...", function() {
             b.showPublishLinkDialog(mxResources.get("url"), !0, null, null, function(a, c, d, e, f, g) {
                 a = new EmbedDialog(b, b.createLink(a, c, d, e, f, g, null, !0));
@@ -12905,7 +13077,7 @@ Menus.prototype.addPopupMenuStyleItems = function(a, c, d) {
             this.addMenuItems(a, ["exportSvg", "-"], c);
             b.isOffline() || b.printPdfExport ? this.addMenuItems(a, ["exportPdf"], c) : b.isOffline() || mxClient.IS_IOS && navigator.standalone || this.addMenuItems(a, ["exportPdf"], c);
             mxClient.IS_IE || "undefined" === typeof VsdxExport && b.isOffline() || this.addMenuItems(a, ["exportVsdx"], c);
-            this.addMenuItems(a, ["-", "exportHtml", "exportXml", "exportUrl"], c);
+            this.addMenuItems(a, ["-", "exportHtml", "exportXml", "exportRdf", "exportUrl"], c);
             b.isOffline() || (a.addSeparator(c), this.addMenuItem(a, "export", c).firstChild.nextSibling.innerHTML = mxResources.get("advanced") + "...")
         })));
         this.put("importFrom", new Menu(mxUtils.bind(this, function(a, c) {
@@ -13855,10 +14027,10 @@ DiagramFormatPanel.prototype.addStyleOps = function(a) {
         } else {
             description_val = "";
         }
-        if ("identifier" in root_style) {
-            identifier_val = root_style["identifier"];
+        if ("eptype" in root_style) {
+            eptype_val = root_style["eptype"];
         } else {
-            identifier_val = "";
+            eptype_val = "";
         }
     } else {
         URI_val = "";
@@ -13866,7 +14038,7 @@ DiagramFormatPanel.prototype.addStyleOps = function(a) {
         title_val = "";
         creator_val = "";
         description_val = "";
-        identifier_val = "";
+        eptype_val = "";
     }
 
     //Edit URI
@@ -14006,27 +14178,27 @@ DiagramFormatPanel.prototype.addStyleOps = function(a) {
     a.appendChild(c);
     mxUtils.br(a);
 
-    //Edit identifier
-    EP_URI_identifier_div = document.createElement("div");
-    if (identifier_val != "") {
-        mxUtils.setTextContent(EP_URI_identifier_div, "Identifier : " + identifier_val);
+    //Edit eptype
+    EP_URI_eptype_div = document.createElement("div");
+    if (eptype_val != "") {
+        mxUtils.setTextContent(EP_URI_eptype_div, "EPtype : " + eptype_val);
     } else {
-        mxUtils.setTextContent(EP_URI_identifier_div, "Identifier : none");
+        mxUtils.setTextContent(EP_URI_eptype_div, "EPtype : none");
     }
-    EP_URI_identifier_div.style.width = "200px";
-    EP_URI_identifier_div.style.whiteSpace = "normal";
-    EP_URI_identifier_div.className = "diagram_div";
-    EP_URI_identifier_div.style.display = "table";
-    EP_URI_identifier_div.style.marginBottom = "4px";
-    EP_URI_identifier_div.style.wordBreak = "break-all";
+    EP_URI_eptype_div.style.width = "200px";
+    EP_URI_eptype_div.style.whiteSpace = "normal";
+    EP_URI_eptype_div.className = "diagram_div";
+    EP_URI_eptype_div.style.display = "table";
+    EP_URI_eptype_div.style.marginBottom = "4px";
+    EP_URI_eptype_div.style.wordBreak = "break-all";
 
-    var c = mxUtils.button("Edit identifier", mxUtils.bind(this, function(a) {
-        this.editorUi.actions.get("editidentifier").funct()
+    var c = mxUtils.button("Edit eptype", mxUtils.bind(this, function(a) {
+        this.editorUi.actions.get("editeptype").funct()
     }));
-    c.setAttribute("title", mxResources.get("editidentifier") + " (" + this.editorUi.actions.get("editidentifier").shortcut + ")");
+    c.setAttribute("title", "editeptype");
     c = setButtonStyle(c);
 
-    a.appendChild(EP_URI_identifier_div);
+    a.appendChild(EP_URI_eptype_div);
     a.appendChild(c);
     mxUtils.br(a);
     return a
@@ -14169,6 +14341,7 @@ StyleFormatPanel.prototype.addObjectInfo = function(a) {
     }
 
     textbox1.value = str + cells[0].id;
+    textbox1.id = "id"
     textbox1.type = "text";
     textbox1.style.width = "200px";
     textbox1.className = "textbox";
@@ -14181,6 +14354,24 @@ StyleFormatPanel.prototype.addObjectInfo = function(a) {
 
     a.appendChild(id_div);
     a.appendChild(textbox1);
+    mxUtils.br(a);
+
+    d = mxUtils.button("Edit ID", mxUtils.bind(this, function(a) {
+        this.editorUi.actions.get("editID").funct()
+    }));
+    d.setAttribute("title", "editID");
+    d.style.marginBottom = "9px";
+    d.style.width = "202px";
+    d.style.height = "20px";
+    d.style.backgroundColor = "rgb(79 79 79)";
+    d.style.borderColor = "rgb(37 37 37)";
+    d.style.color = "white";
+    // d.style.backgroundColor="rgb(255 255 255)";
+    // d.style.borderColor="rgb(37 37 37)";
+    d.style.borderRadius = "3px";
+    d.style.borderWidth = "thin";
+    a.appendChild(d);
+    mxUtils.br(a);
 
     textbox2 = document.createElement("input");
     // mxUtils.setValue(textbox2, cells[0].id);

@@ -1,0 +1,37 @@
+                          OLS Regression Results                          
+Dep. Variable:   ,PowerConsumption,  R-squared (uncentered):     ,   0.993
+Model:           ,OLS             ,  Adj. R-squared (uncentered):,   0.993
+Method:          ,Least Squares   ,  F-statistic:                ,   2891.
+Date:            ,Fri, 01 Oct 2021,  Prob (F-statistic):         ,  0.00  
+Time:            ,09:25:37        ,  Log-Likelihood:             , -1564.0
+No. Observations:,   360          ,  AIC:                        ,   3164.
+Df Residuals:    ,   342          ,  BIC:                        ,   3234.
+Df Model:        ,    18          ,                              ,        
+Covariance Type: ,nonrobust       ,                              ,        
+                 ,   coef   , std err ,    t    ,P>|t| ,  [0.025 ,  0.975] 
+Shot_count_13T001,    0.0024, 1.62e-05,  148.374, 0.000,    0.002,    0.002
+Shot_count_15T019,    0.0024, 2.26e-05,  107.080, 0.000,    0.002,    0.002
+Shot_count_19T001,    0.0024, 3.94e-05,   59.895, 0.000,    0.002,    0.002
+Shot_count_14T034,    0.0025, 5.46e-05,   45.381, 0.000,    0.002,    0.003
+Shot_count_06T025,    0.0028, 6.61e-05,   42.462, 0.000,    0.003,    0.003
+Shot_count_94T012,    0.0024,    0.000,   22.010, 0.000,    0.002,    0.003
+Shot_count_10T015,    0.0026, 7.15e-05,   36.281, 0.000,    0.002,    0.003
+Shot_count_14T006,    0.0025, 7.67e-05,   32.479, 0.000,    0.002,    0.003
+Shot_count_06T019,    0.0028,    0.000,   27.519, 0.000,    0.003,    0.003
+Shot_count_14T033,    0.0027,    0.000,   18.087, 0.000,    0.002,    0.003
+Shot_count_17T005,    0.0029,    0.000,   19.169, 0.000,    0.003,    0.003
+Shot_count_87031 ,    0.0030,    0.000,    9.110, 0.000,    0.002,    0.004
+Shot_count_13T012,    0.0046,    0.001,    6.703, 0.000,    0.003,    0.006
+Shot_count_99T008,    0.0037,    0.001,    5.187, 0.000,    0.002,    0.005
+Shot_count_94T006,    0.0030,    0.001,    4.027, 0.000,    0.002,    0.004
+Shot_count_5076  ,    0.0037,    0.001,    4.141, 0.000,    0.002,    0.005
+Shot_count_07T001,    0.0040,    0.001,    4.058, 0.000,    0.002,    0.006
+Shot_count_259   ,    0.0026,    0.001,    3.864, 0.000,    0.001,    0.004
+Omnibus:      ,152.165,  Durbin-Watson:     ,   1.315 
+Prob(Omnibus):, 0.000 ,  Jarque-Bera (JB):  ,1041.082 
+Skew:         , 1.624 ,  Prob(JB):          ,8.55e-227
+Kurtosis:     ,10.672 ,  Cond. No.          ,    62.3 
+
+Notes:
+[1] R² is computed without centering (uncentered) since the model does not contain a constant.
+[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
