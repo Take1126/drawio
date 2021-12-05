@@ -1,9 +1,16 @@
 {
-    // IntelliSense を使用して利用可能な属性を学べます。
-    // 既存の属性の説明をホバーして表示します。
-    // 詳細情報は次を確認してください: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        {
+            "name": "Launch Node",
+            "cwd": "${workspaceFolder}/express_server_dir",
+            "program": "${workspaceFolder}/express_server_dir/app.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node",
+        },
 
         {
             "type": "pwa-chrome",
@@ -11,7 +18,15 @@
             "name": "Launch Chrome against localhost",
             "url": "http://localhost:8080/drawio/src/main/webapp/",
             "webRoot": "${workspaceFolder}",
-            "runtimeArgs": ["--allow-file-access-from-files"]
+            "runtimeArgs": [
+                "--allow-file-access-from-files"
+            ]
+        },
+    ],
+    "compounds": [
+        {
+            "name": "Compound",
+            "configurations": ["Launch Chrome against localhost","Launch Node"]
         }
     ]
 }

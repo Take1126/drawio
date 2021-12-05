@@ -1500,27 +1500,35 @@ Actions.prototype.init = function() {
     this.addAction("editLink...", function() {
         if (b.isEnabled() && !b.isSelectionEmpty()) {
             selectedCell = b.getSelectionCell()
-                // if (selectedCell.style.indexOf('pd3type=tool') !== -1) {
-            if (typeof(selectedCell.value) === 'object' && b.getLinkForCell(selectedCell)) {
-                filePath = selectedCell.value.outerHTML.match(/label=\"(.*)\" link/)[1].replace(/ /g, '-')
-                d = `http://localhost:3000/open/${filePath}`
-            } else if (typeof(selectedCell.value) === 'object' && !b.getLinkForCell(selectedCell)) {
-                filePath = selectedCell.value.outerHTML.match(/label=\"(.*)\"/)[1].replace(/ /g, '-')
-                d = `http://localhost:3000/open/${filePath}`
-            } else if (selectedCell.style.indexOf('pd3type=action') !== -1) {
-                selectedCell.edges.forEach((edge) => {
-                    if (edge.source && edge.source.style.indexOf('pd3type=tool') !== -1) {
-                        filePath = typeof(edge.source.value) === 'string' ? edge.source.value.replace(/ /g, '-') : edge.source.value.outerHTML.match(/label=\"(.*)\" link/)[1].replace(/ /g, '-')
-                    }
-                    // else if (edge.target.id === selectedCell.id && edge.style.indexOf('entryX=0;entryY=0.5;') !== -1) {
-                    //     filePath = edge.value.replace(/\//g, '-')
-                    // }
-                })
-                d = `http://localhost:3000/exec/${filePath}`
-            } else {
+                // 保存を読み込んだときと、新規作成の時で異なる。
+            if (typeof(selectedCell.value) == 'object') {
+                filePath = (b.getLinkForCell(selectedCell)) ? selectedCell.value.outerHTML.match(/label=\"(.*)\" link/)[1].replace(/ /g, '-') : selectedCell.value.outerHTML.match(/label=\"(.*)\"/)[1].replace(/ /g, '-')
+            } else if (typeof(selectedCell.value) == 'string') {
                 filePath = selectedCell.value.replace(/ /g, '-')
-                d = `http://localhost:3000/open/${filePath}`
             }
+            filePath = filePath.replace(/(&lt;("[^"]*"|'[^']*'|[^'"&gt;])*&gt;)/gi, '');
+            d = `http://localhost:3000/open/${filePath}`
+            if (selectedCell.style.indexOf('pd3type=action') !== -1) {
+                selectedCell.edges.forEach((edge) => {
+                        let edge_val = (typeof(edge.value) == 'object') ? edge.value.outerHTML.match(/label=\"(.*)\" link/)[1].replace(/ /g, '-') : edge.value.replace(/ /g, '-')
+                        if (edge.source && edge.source.style.indexOf('pd3type=tool') !== -1) {
+                            filePath = typeof(edge.source.value) == 'string' ? edge.source.value.replace(/ /g, '-') : edge.source.value.outerHTML.match(/label=\"(.*)\" link/)[1].replace(/ /g, '-');
+                            filePath = filePath.replace(/(&lt;("[^"]*"|'[^']*'|[^'"&gt;])*&gt;)/gi, '');
+                        } else if (edge.target.id == selectedCell.id && edge.style.indexOf('entryX=0;entryY=0.5;') !== -1) {
+                            inputPath = edge_val.replace(/(&lt;("[^"]*"|'[^']*'|[^'"&gt;])*&gt;)/gi, '');
+                        }
+                        // else if (edge.source.id === selectedCell.id && edge.style.indexOf('entryX=0;entryY=0.5;') !== -1) {
+                        //     outputPath = edge_val;
+                        // }
+                    })
+                    // d = `http://localhost:3000/exec/${filePath}/${inputPath}/${outputPath}`
+                d = `http://localhost:3000/exec/${filePath}/${inputPath}`
+                    // }
+            }
+            //  else {
+            //     filePath = selectedCell.value.replace(/ /g, '-')
+            //     d = `http://localhost:3000/open/${filePath}`
+            // }
             a = selectedCell
         } else {
             var a = selectedCell,
