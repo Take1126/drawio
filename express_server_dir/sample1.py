@@ -3,6 +3,6 @@ inputPath=sys.stdin.readline().strip()
 
 f = open(inputPath, 'r', encoding='UTF-8')
 data = f.read()
-print('Hello world from sample1.py')
+print('Hello world from sample1.py ' + inputPath + ' says ' + data)
 
 f.close()

@@ -329,6 +329,9 @@ def calc_loss(df_input):
     reference_value_power_b_u = 0.04
 
     out_df = df_input.copy() 
+
+    #print("===========out_df==============")
+    #print(out_df)
     
     # Startup_lossデータ作成(Action==3⇒Action==5 or Action ==6 or Action==8になる直前までの消費電力量)                            
     previous_action = 0                                              #最初は過去のActionを参照できないので、最初のif文でフラグ設定するための初期状態
@@ -381,12 +384,16 @@ def calc_loss(df_input):
         setup_and_run_loss_list.append(current_setup_and_run_loss)                   #current_startup_lossの値をリストに加える
 
     # run_lossデータ作成(Action == 4 or? Action == 8 or Action == 12の時で、PowerConsumptionBasicUnit>基準値(仮に基準値=0.04；正規分布として仮定した場合、端の2σあたり)の時の消費電力量とする⇒重回帰分析出来たら、Mold_type毎に判定し直す)                  
-    for datetime,action,power,power_b_u in zip(out_df['DateTime'],out_df['Action'],out_df['PowerConsumption'],out_df['PowerConsumptionBasicUnit']):
-        if (action == 4 or action == 8 or action == 12) and power_b_u > reference_value_power_b_u:
-            current_run_loss = power                                 #電力量をリスト用に格納
+    for datetime,product_line,shot_count,action,power,power_b_u in zip(out_df['DateTime'],out_df['ProductionLine'],out_df['Shot_count'],out_df['Action'],out_df['PowerConsumption'],out_df['PowerConsumptionBasicUnit']):
+        if  product_line == "SMA090" : #2021/12/7改修中
+            reference_value_power_b_u = 0.20
         else:
-            current_run_loss = 0                                 
-        run_loss_list.append(current_run_loss)                       #current_run_lossの値をリストに加える
+            reference_value_power_b_u = 0.04         
+        if (action == 4 or action == 8 or action == 12) and power_b_u > reference_value_power_b_u:
+            current_run_loss = shot_count * (power_b_u - reference_value_power_b_u)  #電力量をリスト用に格納
+        else:
+            current_run_loss = 0                  
+        run_loss_list.append(current_run_loss) #current_run_lossの値をリストに加える
 
     out_df.insert(loc=len(out_df.columns), column='Startup_loss', value=startup_loss_list)
     out_df.insert(loc=len(out_df.columns), column='Down_loss', value=down_loss_list)
@@ -616,6 +623,7 @@ def setup_time_calculate(df_setup_state_pre_resample,df_not_yet_resumple):
     print(df_time)
 
     # Setup_time(段取り状態時間カウンタ)作成
+    previous_minute = 0 #2021/12/7改修(初期化)
     setup_time_list = []                                    #現在分数を抽出してリストに格納
     for datetime,setup in zip(df_time['DateTime'],df_merge_nan_to_2['Setup_flag']):
         if setup != 2.0:
@@ -1699,68 +1707,97 @@ def make_figure_violinplot(df_per_day_mold):
     plt.tight_layout()
     plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Setup_and_wait_loss_time.png', dpi = 200)
 
+
+
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged2 = df_per_day_mold.loc[df_per_day_mold["Setup_and_run_loss_time"]>0]
-    sns.violinplot(x=df_per_day_mold_merged2["Mold_type"], y=df_per_day_mold_merged2['Setup_and_run_loss_time'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/violinplot/seaborn_violinplot_Setup_and_run_loss_time.png', dpi = 200)
+    if df_per_day_mold_merged2.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged2["Mold_type"], y=df_per_day_mold_merged2['Setup_and_run_loss_time'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Setup_and_run_loss_time.png', dpi = 200) #2021/12/7改修
 
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged3 = df_per_day_mold.loc[df_per_day_mold["Run_loss_time"]>0]
-    sns.violinplot(x=df_per_day_mold_merged3["Mold_type"], y=df_per_day_mold_merged3['Run_loss_time'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Run_loss_time.png', dpi = 200)
+    if df_per_day_mold_merged3.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged3["Mold_type"], y=df_per_day_mold_merged3['Run_loss_time'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Run_loss_time.png', dpi = 200)
 
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged4 = df_per_day_mold.loc[df_per_day_mold["Startup_loss"]>0]
-    sns.violinplot(x=df_per_day_mold_merged4["Mold_type"], y=df_per_day_mold_merged4['Startup_loss'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Startup_loss.png', dpi = 200)
+    if df_per_day_mold_merged4.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged4["Mold_type"], y=df_per_day_mold_merged4['Startup_loss'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Startup_loss.png', dpi = 200)
 
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged5 = df_per_day_mold.loc[df_per_day_mold["Setup_and_wait_loss"]>0]
-    sns.violinplot(x=df_per_day_mold_merged5["Mold_type"], y=df_per_day_mold_merged5['Setup_and_wait_loss'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Setup_and_wait_loss.png', dpi = 200)
+    if df_per_day_mold_merged5.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged5["Mold_type"], y=df_per_day_mold_merged5['Setup_and_wait_loss'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Setup_and_wait_loss.png', dpi = 200)
 
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged5 = df_per_day_mold.loc[df_per_day_mold["Setup_and_run_loss"]>0]
-    sns.violinplot(x=df_per_day_mold_merged5["Mold_type"], y=df_per_day_mold_merged5['Setup_and_run_loss'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Setup_and_run_loss.png', dpi = 200)
+    if df_per_day_mold_merged5.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged5["Mold_type"], y=df_per_day_mold_merged5['Setup_and_run_loss'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Setup_and_run_loss.png', dpi = 200)
 
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged6 = df_per_day_mold.loc[df_per_day_mold["Run_loss"]>0]
-    sns.violinplot(x=df_per_day_mold_merged6["Mold_type"], y=df_per_day_mold_merged6['Run_loss'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Run_loss.png', dpi = 200)
+    if df_per_day_mold_merged6.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged6["Mold_type"], y=df_per_day_mold_merged6['Run_loss'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Run_loss.png', dpi = 200)
 
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged7 = df_per_day_mold.loc[df_per_day_mold["Down_loss_time"]>0]
-    sns.violinplot(x=df_per_day_mold_merged7["Mold_type"], y=df_per_day_mold_merged7['Down_loss_time'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Down_loss_time.png', dpi = 200)
+    if df_per_day_mold_merged7.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged7["Mold_type"], y=df_per_day_mold_merged7['Down_loss_time'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Down_loss_time.png', dpi = 200)
 
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged8 = df_per_day_mold.loc[df_per_day_mold["Down_loss"]>0]
-    sns.violinplot(x=df_per_day_mold_merged8["Mold_type"], y=df_per_day_mold_merged8['Down_loss'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Down_loss.png', dpi = 200)
+    if df_per_day_mold_merged8.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged8["Mold_type"], y=df_per_day_mold_merged8['Down_loss'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_Down_loss.png', dpi = 200)
 
     plt.figure(figsize=(10,5))
     df_per_day_mold_merged9 = df_per_day_mold.loc[df_per_day_mold["PowerConsumptionBasicUnit"]>0]
-    sns.violinplot(x=df_per_day_mold_merged9["Mold_type"], y=df_per_day_mold_merged9['PowerConsumptionBasicUnit'])
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_PowerConsumptionBasicUnit.png', dpi = 200)
+    if df_per_day_mold_merged9.empty:#2021/12/7改修
+        pass
+    else:
+        sns.violinplot(x=df_per_day_mold_merged9["Mold_type"], y=df_per_day_mold_merged9['PowerConsumptionBasicUnit'])
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        plt.savefig('./OutputData/Figure/violinplot/seaborn_violinplot_PowerConsumptionBasicUnit.png', dpi = 200)
 
 def make_figure_barplot(df_per_year_mold_output):
     plt.figure(figsize=(10,5))
